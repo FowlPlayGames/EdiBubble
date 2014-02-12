@@ -15,6 +15,7 @@ public class PlayerScript : MonoBehaviour {
 	public float fCurrentSize;											// Current size of the player bubble
 	public float fMaxGrowSize;											// Maximum size player bubble can grow to
 	public float fReboundTimer;											// Timer to turn off rebounding
+	public AudioClip acEatBubble;										// Sound to play when a bubble is eaten
 
 	// PRIVATE VARS
 	private Vector3 v3Tilt;												// Vector to hold tilt values
@@ -65,6 +66,8 @@ public class PlayerScript : MonoBehaviour {
 		if( other.gameObject.tag == "TestCube" )
 		{
 			Debug.Log( "You hit shit!" );
+
+			audio.PlayOneShot( acEatBubble );
 
 			other.transform.position = 
 				new Vector3( Random.Range( -4.0f, 4.0f ), 
