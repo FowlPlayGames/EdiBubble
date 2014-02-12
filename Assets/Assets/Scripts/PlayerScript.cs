@@ -58,9 +58,15 @@ public class PlayerScript : MonoBehaviour {
 
 		if( Input.GetKey( KeyCode.KeypadPlus ) && fCurrentSize < fMaxGrowSize )
 		{
-			Debug.Log ("Pressed that shitty key" );
+			Debug.Log ("Pressed the grow key" );
 			fCurrentSize += fGrowRate;
-			GrowBubble();
+			GrowShrinkBubble();
+		}
+		else if( Input.GetKey( KeyCode.KeypadMinus ) && fCurrentSize > fMinSize )
+		{
+			Debug.Log( "Pressed the shrink key" );
+			fCurrentSize -= fGrowRate;
+			GrowShrinkBubble();
 		}
 	}
 
@@ -114,7 +120,7 @@ public class PlayerScript : MonoBehaviour {
 		fReboundTimer = timer;
 	}
 
-	public void GrowBubble()
+	public void GrowShrinkBubble()
 	{
 		// TODO -- NEED TO WRITE THIS SHIT TOO
 		transform.localScale = new Vector3( fCurrentSize, 				// This will need to be moved to the growbubble function
