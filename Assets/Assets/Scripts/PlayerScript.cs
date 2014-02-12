@@ -11,25 +11,26 @@ using System.Collections;
 public class PlayerScript : MonoBehaviour {
 
 	// CONSTANT VARS
-	private const float fYTiltCalibration = 0.6f;						// Calibration -- Might want to use first so many frames to capture this per user
-	private const float fMinSize = 1.0f;								// Minimum size player bubble can be
-	private const float fMaxSize = 5.0f;								// Maximum size player bubble can be
-	private const float fSizeIncrement = 0.5f;							// How much to grow player bubble by
-	private const float fOriginalReboundTime = 0.25f;					// Default rebound time
-	public float fGrowRate = 0.05f;										// How fast does the player grow / shrink?
+	private const float fYTiltCalibration 		= 0.3f;					// Calibration -- Might want to use first so many frames to capture this per user
+	private const float fMinSize 				= 1.0f;					// Minimum size player bubble can be
+	private const float fMaxSize 				= 5.0f;					// Maximum size player bubble can be
+	private const float fSizeIncrement 			= 0.5f;					// How much to grow player bubble by
+	private const float fOriginalReboundTime 	= 0.25f;				// Default rebound time
+	private const float fGrowRate 				= 0.05f;				// How fast does the player grow / shrink?
+	private const float fMinTilt 				= -0.03f;				// Minimum tilt
+	private const float fMaxTilt 				= 0.03f;				// Maximum tilt
 
 	// PUBLIC VARS
-	public float fSpeed = 5.0f;											// Speed of the player bubble
+	private float fSpeed;												// Speed of the player bubble
 	public float fCurrentSize;											// Current size of the player bubble
 	public float fMaxGrowSize;											// Maximum size player bubble can grow to
 	public float fReboundTimer;											// Timer to turn off rebounding
 	public AudioClip acEatBubble;										// Sound to play when a bubble is eaten
 
-
 	// PRIVATE VARS
 	private Vector3 v3Tilt;												// Vector to hold tilt values
 	private bool bRebounding;											// Did the player recently collide with rocks?
-	public Vector3 v3ReboundVec;										// Rebounding velocity
+	private Vector3 v3ReboundVec;										// Rebounding velocity
 	
 	void Start () 
 	{
@@ -38,6 +39,7 @@ public class PlayerScript : MonoBehaviour {
 		fMaxGrowSize 	= 1.0f; 										// Player currently cannot grow past 1.0f
 		fReboundTimer	= fOriginalReboundTime;							// Set the rebound timer
 		bRebounding 	= false;										// Did the player recently collide with rocks?
+		fSpeed			= 100.0f;										// Set the speed of the player bubble
 	}
 
 	void FixedUpdate () 
@@ -45,30 +47,22 @@ public class PlayerScript : MonoBehaviour {
 		// IF NOT ALREADY REBOUNDING FROM A COLLISION WITH A WALL
 		if( !bRebounding )												
 		{
-			v3Tilt.x = Input.acceleration.x * fSpeed * Time.deltaTime;	// Calculate tilt value in the x direction
+			v3Tilt = Input.acceleration;								// Get the tilt vector
+			v3Tilt.z = 0.0f;											// Zero out z component
 
-			float fYInput = Input.acceleration.y;						// Get the current y tilt
+			v3Tilt.x = ClipTilt( v3Tilt.x );							// Check if tilt x value is too large or small
+			v3Tilt.x *= fSpeed * Time.deltaTime;						// Calculate position change in the x direction
 
-			// IF THE CURRENT TILT IS GREATER THAN OR EQUAL TO THE CALIBRATION
-			if( fYInput >= -fYTiltCalibration )							
-			{
-				v3Tilt.y = ( ( fYInput + fYTiltCalibration ) * fSpeed * // Calculate tilt value in the y direction
-				            Time.deltaTime ) * fYTiltCalibration;
-			}
-			// ELSE THE CURRENT TILT IS LESS THAN THE CALIBRATION
-			else
-			{
-				v3Tilt.y = ( ( fYInput + fYTiltCalibration ) * fSpeed * // Calculate tilt value in the y direction
-				            Time.deltaTime ) * 4.0f * fYTiltCalibration;
-			}		
+			v3Tilt.y += fYTiltCalibration;								// Calculate tilt in the y direction
+			v3Tilt.y = ClipTilt( v3Tilt.y );							// Check if tilt y value is too large or small
+			v3Tilt.y *= fSpeed * Time.deltaTime;						// Calculate position change in the y direction
 
 			transform.position += v3Tilt;								// Update the overall position
 		}
-		// ELSE ALREADY REBOUNDING FROM A COLLISION WITH A WALL
+		// ELSE ALREADY REBOUNDING FROM A COLLISION WITH A WALL -- STILL RECOVERING FROM HITTING A WALL
 		else
 		{
-			transform.position += ( v3ReboundVec * fSpeed * 			// Update the position by the rebound vector
-			                         Time.deltaTime );
+			transform.position += v3ReboundVec;							// Update the position by the rebound vector
 			fReboundTimer -= Time.deltaTime;							// Decrement the rebound timer
 		}
 
@@ -120,35 +114,36 @@ public class PlayerScript : MonoBehaviour {
 		else if( other.gameObject.tag == "LeftRocks" || other.gameObject.tag == "RightRocks" )
 		{
 			Debug.Log( "Hit the left or right rocks" );
-			Vector3 temp = Vector3.zero;								// Zero vector
-			temp.x = Input.acceleration.x;								// Set tilt value in the x direction
-			temp.y = Input.acceleration.y + fYTiltCalibration;			// Set tilt value in the y direction and account for calibration
+			Vector3 tempTilt = Input.acceleration;						// Get the tilt vector
+			tempTilt.z = 0.0f;											// Zero out z component
 
-			temp.x *= -1.0f;											// Reverse the x direction
-			v3ReboundVec = temp;										// Set the rebound vector
+			tempTilt.x = ClipTilt( tempTilt.x );						// Check to see if temptilt in x is too large or small
+			tempTilt.x *= fSpeed * Time.deltaTime;						// Calculate position change in the x direction
+
+			tempTilt.y += fYTiltCalibration;							// Calculate tilt in the y direction
+			tempTilt.y = ClipTilt( tempTilt.y );						// Check to see if temptilt in y is too large or small
+			tempTilt.y *= fSpeed * Time.deltaTime;						// Calculate position change in the y direction
+
+			tempTilt.x *= -1.0f;										// Reverse the x direction
+			v3ReboundVec = tempTilt;									// Set the rebound vector
 			Rebound( fReboundTimer );									// Let the bubble rebound off the wall
 		}
 		// ELSE IF YOU COLLIDED WITH ROCKS ON THE TOP OR THE BOTTOM
 		else if( other.gameObject.tag == "TopRocks" || other.gameObject.tag == "BottomRocks" )
 		{
 			Debug.Log( "Hit the top or bottom rocks" );
-			Vector3 temp = Vector3.zero;								// Zero vector
-			temp.x = Input.acceleration.x;								// Get tilt value in the x direction
-			temp.y = Input.acceleration.y;								// Get tilt value in the y direction
-		
-			// IF THE CURRENT TILT IS GREATER THAN OR EQUAL TO THE NEGATIVE CALIBRATION
-			if( temp.y >= -fYTiltCalibration )							
-			{
-				temp.y += fYTiltCalibration;							// Add calibration to the tilt
-			}
-			// ELSE THE CURRENT TILT IS LESS THAN THE NEGATIVE CALIBRATION
-			else
-			{
-				temp.y += fYTiltCalibration * -4.2f / fSpeed;			// Add calibration to the tilt -- Don't multiply speed twice
-			}	
+			Vector3 tempTilt = Input.acceleration;						// Get the tilt vector
+			tempTilt.z = 0.0f;											// Zero out z component
 
-			temp.y *= -1.0f;											// Reverse the y direction						
-			v3ReboundVec = temp;										// Set the rebound vector
+			tempTilt.x *= fSpeed * Time.deltaTime;						// Calculate the tilt in the x direction
+			tempTilt.x = ClipTilt( tempTilt.x );						// Check to see if temptilt in x is too large or small
+
+			tempTilt.y = ( tempTilt.y + fYTiltCalibration ) *			// Calculate the tilt in the y direction
+				fSpeed * Time.deltaTime;
+			tempTilt.y = ClipTilt( tempTilt.y );						// Check to see if the temptilt in y is too large or small
+		
+			tempTilt.y *= -1.0f;										// Reverse the y direction						
+			v3ReboundVec = tempTilt;									// Set the rebound vector
 			Rebound( fReboundTimer );									// Let the bubble rebound off the wall
 		}
 	}
@@ -163,5 +158,21 @@ public class PlayerScript : MonoBehaviour {
 	{
 		transform.localScale = new Vector3( fCurrentSize, 				// Set the scale of the player bubble based on its current size
 		                                     fCurrentSize, 0.0f );
+	}
+
+	public float ClipTilt( float fTiltVal )
+	{
+		if( fTiltVal < fMinTilt )
+		{
+			return fMinTilt;
+		}
+		else if ( fTiltVal > fMaxTilt )
+		{
+			return fMaxTilt;
+		}
+		else
+		{
+			return fTiltVal;
+		}
 	}
 }
