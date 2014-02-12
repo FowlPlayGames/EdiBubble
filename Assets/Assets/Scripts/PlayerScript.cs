@@ -4,15 +4,19 @@ using System.Collections;
 public class PlayerScript : MonoBehaviour {
 
 	// CONSTANT VARS
-	private const float fYTiltCalibration = 0.4f;						// Calibration -- Might want to use first so many frames to capture this per user
+	private const float fYTiltCalibration = 0.6f;						// Calibration -- Might want to use first so many frames to capture this per user
 	private const float fMinSize = 1.0f;								// Minimum size player bubble can be
 	private const float fMaxSize = 5.0f;								// Maximum size player bubble can be
 	private const float fSizeIncrement = 1.0f;							// How much to grow player bubble by
 	private const float fOriginalReboundTime = 0.25f;					// Default rebound time
-	public float fGrowRate = 0.1f;											// How fast does the player grow / shrink?
+	public float fGrowRate = 0.05f;										// How fast does the player grow / shrink?
+
+
+	public float fDifference;
+	public float testing;
 
 	// PUBLIC VARS
-	public float fSpeed;												// Speed of the player bubble
+	public float fSpeed = 5.0f;											// Speed of the player bubble
 	public float fCurrentSize;											// Current size of the player bubble
 	public float fMaxGrowSize;											// Maximum size player bubble can grow to
 	public float fReboundTimer;											// Timer to turn off rebounding
@@ -37,9 +41,21 @@ public class PlayerScript : MonoBehaviour {
 	{
 		if( !bRebounding )												// If not already rebounding from a collision with wall
 		{
+
 			v3Tilt.x = Input.acceleration.x * fSpeed * Time.deltaTime;	// Calculate tilt value in x direction
-			v3Tilt.y = ( Input.acceleration.y + fYTiltCalibration ) * 	// Calculate tilt value in y direction and account for calibration
-				fSpeed * Time.deltaTime;
+
+			float fYInput = Input.acceleration.y;						// Get the current y tilt
+
+			if( fYInput >= -fYTiltCalibration )							// If the current tilt is greater than the calibration
+			{
+				v3Tilt.y = ( ( fYInput + fYTiltCalibration ) * fSpeed * 
+				            Time.deltaTime ) * fYTiltCalibration;
+			}
+			else
+			{
+				v3Tilt.y = ( ( fYInput + fYTiltCalibration ) * fSpeed * 
+				            Time.deltaTime ) * 4.0f * fYTiltCalibration;
+			}		
 
 			transform.position += v3Tilt;								// Update the overall position
 		}
