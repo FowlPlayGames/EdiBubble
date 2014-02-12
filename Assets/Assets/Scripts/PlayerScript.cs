@@ -6,9 +6,10 @@ public class PlayerScript : MonoBehaviour {
 	// CONSTANT VARS
 	private const float fYTiltCalibration = 0.4f;						// Calibration -- Might want to use first so many frames to capture this per user
 	private const float fMinSize = 1.0f;								// Minimum size player bubble can be
-	private const float fMaxSize = 10.0f;								// Maximum size player bubble can be
+	private const float fMaxSize = 5.0f;								// Maximum size player bubble can be
 	private const float fSizeIncrement = 1.0f;							// How much to grow player bubble by
-	private const float fOriginalReboundTime = 0.25f;
+	private const float fOriginalReboundTime = 0.25f;					// Default rebound time
+	public float fGrowRate = 0.1f;											// How fast does the player grow / shrink?
 
 	// PUBLIC VARS
 	public float fSpeed;												// Speed of the player bubble
@@ -17,13 +18,12 @@ public class PlayerScript : MonoBehaviour {
 	public float fReboundTimer;											// Timer to turn off rebounding
 	public AudioClip acEatBubble;										// Sound to play when a bubble is eaten
 
+
 	// PRIVATE VARS
 	private Vector3 v3Tilt;												// Vector to hold tilt values
 	private bool bRebounding;											// Did the player recently collide with rocks?
 	private Vector3 v3ReboundVec;										// Rebounding velocity
-
-
-
+	
 	void Start () 
 	{
 		v3Tilt 			= Vector3.zero;									// Zero out v3Tilt vector
@@ -33,7 +33,7 @@ public class PlayerScript : MonoBehaviour {
 		bRebounding 	= false;										// Did the player recently collide with rocks?
 	}
 
-	void Update () 
+	void FixedUpdate () 
 	{
 		if( !bRebounding )												// If not already rebounding from a collision with wall
 		{
@@ -56,7 +56,12 @@ public class PlayerScript : MonoBehaviour {
 			bRebounding = false;										// Set fRebounding to false so that position can be updated via input
 		}
 
-		// TODO -- CLIP THE BOUNDS OF THE BUBBLE
+		if( Input.GetKey( KeyCode.KeypadPlus ) && fCurrentSize < fMaxGrowSize )
+		{
+			Debug.Log ("Pressed that shitty key" );
+			fCurrentSize += fGrowRate;
+			GrowBubble();
+		}
 	}
 
 	void OnCollisionEnter2D( Collision2D other )
@@ -73,12 +78,9 @@ public class PlayerScript : MonoBehaviour {
 				new Vector3( Random.Range( -4.0f, 4.0f ), 
 							 Random.Range( -4.0f, 4.0f ), 0.0f );		// for testing -- move square to a random position
 
-
-
 			if( fMaxGrowSize < fMaxSize )								// If there is room to grow
 			{
 				fMaxGrowSize += fSizeIncrement;							// Increment the max grow size
-				transform.localScale += new Vector3( 1.0f, 1.0f, 0.0f );// This will need to be moved to the growbubble function
 			}
 		}
 		// IF YOU COLLIDED WITH ROCKS ON THE LEFT OR THE RIGHT
@@ -112,8 +114,10 @@ public class PlayerScript : MonoBehaviour {
 		fReboundTimer = timer;
 	}
 
-	public void GrowBubble( float currSize, float desiredSize )
+	public void GrowBubble()
 	{
 		// TODO -- NEED TO WRITE THIS SHIT TOO
+		transform.localScale = new Vector3( fCurrentSize, 				// This will need to be moved to the growbubble function
+		                                     fCurrentSize, 0.0f );
 	}
 }
