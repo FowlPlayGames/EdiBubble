@@ -48,30 +48,30 @@ public class PlayerScript : MonoBehaviour {
 		// IF NOT ALREADY REBOUNDING FROM A COLLISION WITH A WALL
 		if( !bRebounding )												
 		{
-			v3Tilt = Input.acceleration;								// Get the tilt vector
-			v3Tilt.z = 0.0f;											// Zero out z component
+			v3Tilt = Input.acceleration;									// Get the tilt vector
+			v3Tilt.z = 0.0f;												// Zero out z component
 
-			v3Tilt.x = ClipTilt( v3Tilt.x );							// Check if tilt x value is too large or small
-			v3Tilt.x *= fSpeed * Time.deltaTime;						// Calculate position change in the x direction
+			v3Tilt.x = ClipTilt( v3Tilt.x );								// Check if tilt x value is too large or small
+			v3Tilt.x *= fSpeed * Time.deltaTime;							// Calculate position change in the x direction
 
-			v3Tilt.y += fYTiltCalibration;								// Calculate tilt in the y direction
-			v3Tilt.y = ClipTilt( v3Tilt.y );							// Check if tilt y value is too large or small
-			v3Tilt.y *= fSpeed * Time.deltaTime;						// Calculate position change in the y direction
+			v3Tilt.y += fYTiltCalibration;									// Calculate tilt in the y direction
+			v3Tilt.y = ClipTilt( v3Tilt.y );								// Check if tilt y value is too large or small
+			v3Tilt.y *= fSpeed * Time.deltaTime;							// Calculate position change in the y direction
 
-			transform.position += v3Tilt;								// Update the overall position
+			transform.position += v3Tilt;									// Update the overall position
 		}
 		// ELSE ALREADY REBOUNDING FROM A COLLISION WITH A WALL -- STILL RECOVERING FROM HITTING A WALL
 		else
 		{
-			transform.position += v3ReboundVec;							// Update the position by the rebound vector
-			fReboundTimer -= Time.deltaTime;							// Decrement the rebound timer
+			transform.position += v3ReboundVec;								// Update the position by the rebound vector
+			fReboundTimer -= Time.deltaTime;								// Decrement the rebound timer
 		}
 
 		// IF THE REBOUND TIMER HAS EXPIRED
 		if( fReboundTimer <= 0.0f )										
 		{
-			fReboundTimer = fOriginalReboundTime;						// Reset the rebound timer for the next collision with a wall
-			bRebounding = false;										// Set fRebounding to false so that position can be updated via input
+			fReboundTimer = fOriginalReboundTime;							// Reset the rebound timer for the next collision with a wall
+			bRebounding = false;											// Set fRebounding to false so that position can be updated via input
 		}
 	}
 
@@ -84,65 +84,65 @@ public class PlayerScript : MonoBehaviour {
 		{
 			Debug.Log( "You hit shit!" );
 
-			audio.PlayOneShot( acEatBubble );							// Play eat bubble sound
+			audio.PlayOneShot( acEatBubble );								// Play eat bubble sound
 
-			other.transform.position = 									// for testing -- move square to a random position
+			other.transform.position = 										// for testing -- move square to a random position
 				new Vector3( Random.Range( -4.0f, 4.0f ), 
 							 Random.Range( -4.0f, 4.0f ), 0.0f );		
 
 			// IF THERE IS ROOM TO GROW
 			if( fMaxGrowSize < fMaxSize )							
 			{
-				fMaxGrowSize += fSizeIncrement;							// Increment the max grow size
+				fMaxGrowSize += fSizeIncrement;								// Increment the max grow size
 			}
 		}
 		// ELSE IF YOU COLLIDED WITH ROCKS ON THE LEFT OR THE RIGHT
 		else if( other.gameObject.tag == "LeftRocks" || other.gameObject.tag == "RightRocks" )
 		{
 			Debug.Log( "Hit the left or right rocks" );
-			Vector3 tempTilt = Input.acceleration;						// Get the tilt vector
-			tempTilt.z = 0.0f;											// Zero out z component
+			Vector3 tempTilt = Input.acceleration;							// Get the tilt vector
+			tempTilt.z = 0.0f;												// Zero out z component
 
-			tempTilt.x = ClipTilt( tempTilt.x );						// Check to see if temptilt in x is too large or small
-			tempTilt.x *= fSpeed * Time.deltaTime;						// Calculate position change in the x direction
+			tempTilt.x = ClipTilt( tempTilt.x );							// Check to see if temptilt in x is too large or small
+			tempTilt.x *= fSpeed * Time.deltaTime;							// Calculate position change in the x direction
 
-			tempTilt.y += fYTiltCalibration;							// Calculate tilt in the y direction
-			tempTilt.y = ClipTilt( tempTilt.y );						// Check to see if temptilt in y is too large or small
-			tempTilt.y *= fSpeed * Time.deltaTime;						// Calculate position change in the y direction
+			tempTilt.y += fYTiltCalibration;								// Calculate tilt in the y direction
+			tempTilt.y = ClipTilt( tempTilt.y );							// Check to see if temptilt in y is too large or small
+			tempTilt.y *= fSpeed * Time.deltaTime;							// Calculate position change in the y direction
 
-			tempTilt.x *= -1.0f;										// Reverse the x direction
-			v3ReboundVec = tempTilt;									// Set the rebound vector
-			Rebound( fReboundTimer );									// Let the bubble rebound off the wall
+			tempTilt.x *= -1.0f;											// Reverse the x direction
+			v3ReboundVec = tempTilt;										// Set the rebound vector
+			Rebound( fReboundTimer );										// Let the bubble rebound off the wall
 		}
 		// ELSE IF YOU COLLIDED WITH ROCKS ON THE TOP OR THE BOTTOM
 		else if( other.gameObject.tag == "TopRocks" || other.gameObject.tag == "BottomRocks" )
 		{
 			Debug.Log( "Hit the top or bottom rocks" );
-			Vector3 tempTilt = Input.acceleration;						// Get the tilt vector
-			tempTilt.z = 0.0f;											// Zero out z component
+			Vector3 tempTilt = Input.acceleration;							// Get the tilt vector
+			tempTilt.z = 0.0f;												// Zero out z component
 
-			tempTilt.x *= fSpeed * Time.deltaTime;						// Calculate the tilt in the x direction
-			tempTilt.x = ClipTilt( tempTilt.x );						// Check to see if temptilt in x is too large or small
+			tempTilt.x *= fSpeed * Time.deltaTime;							// Calculate the tilt in the x direction
+			tempTilt.x = ClipTilt( tempTilt.x );							// Check to see if temptilt in x is too large or small
 
-			tempTilt.y = ( tempTilt.y + fYTiltCalibration ) *			// Calculate the tilt in the y direction
+			tempTilt.y = ( tempTilt.y + fYTiltCalibration ) *				// Calculate the tilt in the y direction
 				fSpeed * Time.deltaTime;
-			tempTilt.y = ClipTilt( tempTilt.y );						// Check to see if the temptilt in y is too large or small
+			tempTilt.y = ClipTilt( tempTilt.y );							// Check to see if the temptilt in y is too large or small
 		
-			tempTilt.y *= -1.0f;										// Reverse the y direction						
-			v3ReboundVec = tempTilt;									// Set the rebound vector
-			Rebound( fReboundTimer );									// Let the bubble rebound off the wall
+			tempTilt.y *= -1.0f;											// Reverse the y direction						
+			v3ReboundVec = tempTilt;										// Set the rebound vector
+			Rebound( fReboundTimer );										// Let the bubble rebound off the wall
 		}
 	}
 
 	public void Rebound( float timer )
 	{
-		bRebounding = true;												// Set rebounding to true -- will freeze controls
-		fReboundTimer = timer;											// Set the rebound timer
+		bRebounding = true;													// Set rebounding to true -- will freeze controls
+		fReboundTimer = timer;												// Set the rebound timer
 	}
 
 	public void GrowShrinkBubble()
 	{
-		transform.localScale = new Vector3( fCurrentSize, 				// Set the scale of the player bubble based on its current size
+		transform.localScale = new Vector3( fCurrentSize, 					// Set the scale of the player bubble based on its current size
 		                                     fCurrentSize, 0.0f );
 	}
 
@@ -151,47 +151,47 @@ public class PlayerScript : MonoBehaviour {
 		// IF TILT VALUE IS LESS THAN MINIMUM TILT
 		if( fTiltVal < fMinTilt )
 		{
-			return fMinTilt;											// Return mininum tilt
+			return fMinTilt;												// Return mininum tilt
 		}
 		// ELSE IF TILT VALUE IS GREATER THAN MAXIMUM TILT
 		else if ( fTiltVal > fMaxTilt )
 		{
-			return fMaxTilt;											// Return maximum tilt
+			return fMaxTilt;												// Return maximum tilt
 		}
 		// ELSE TILT IS OK
 		else
 		{
-			return fTiltVal;											// Return current tilt
+			return fTiltVal;												// Return current tilt
 		}
 	}
 
 	public void IncreaseCurrentSize( float increase )
 	{
-		fCurrentSize += increase;
+		fCurrentSize += increase;											// Increase current size
 	}
 
 	public void DecreaseCurrentSize( float decrease )
 	{
-		fCurrentSize -= decrease;
+		fCurrentSize -= decrease;											// Decrease current size
 	}
 
 	public float GetGrowRate()
 	{
-		return fGrowRate;
+		return fGrowRate;													// Return the grow rate
 	}
 
 	public float GetCurrentSize()
 	{
-		return fCurrentSize;
+		return fCurrentSize;												// Return the current size
 	}
 
 	public float GetMaxGrowSize()
 	{
-		return fMaxGrowSize;
+		return fMaxGrowSize;												// Return the max grow size
 	}
 
 	public float GetMinSize()
 	{
-		return fMinSize;
+		return fMinSize;													// Return the min size
 	}
 }
