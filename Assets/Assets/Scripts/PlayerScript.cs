@@ -31,6 +31,8 @@ public class PlayerScript : MonoBehaviour {
 	private Vector3 v3Tilt;												// Vector to hold tilt values
 	private bool bRebounding;											// Did the player recently collide with rocks?
 	private Vector3 v3ReboundVec;										// Rebounding velocity
+	private RaycastHit hit						= new RaycastHit();		// Raycast object
+	private Ray ray								= new Ray();			// Ray object
 	
 	void Start () 
 	{
@@ -40,6 +42,36 @@ public class PlayerScript : MonoBehaviour {
 		fReboundTimer	= fOriginalReboundTime;							// Set the rebound timer
 		bRebounding 	= false;										// Did the player recently collide with rocks?
 		fSpeed			= 100.0f;										// Set the speed of the player bubble
+	}
+
+	void Update()
+	{
+		// IF PLAYER HAS TOUCHED THE SCREEN
+		if( Input.touchCount > 0 )
+		{
+			Debug.Log( "Screen was touched" );
+			ray = Camera.main.ScreenPointToRay( 						// Set ray position
+			      Input.GetTouch( 0 ).position );
+
+			// WE HIT SOMETHING -- LETS SEE WHAT IT WAS
+			if( Physics.Raycast( ray, out hit, 15.0f ) )
+			{
+				// IF PLAYER PRESSED THE GROW BUTTON
+				if( hit.transform.tag == "GrowButton" && fCurrentSize < fMaxGrowSize )
+				{
+					Debug.Log( "Pressed the grow key" );
+					fCurrentSize += fGrowRate;							// Increase the current size by the grow rate
+					GrowShrinkBubble();									// Apply the change in size
+				}
+				// ELSE IF THE PLAYER PRESSED THE SHRINK BUTTON
+				if( hit.transform.tag == "ShrinkButton" && fCurrentSize > fMinSize )
+				{
+					Debug.Log( "Pressed the shrink button" ); 
+					fCurrentSize -= fGrowRate;							// Decrease the current size by the grow rate
+					GrowShrinkBubble();									// Apply the change in size
+				}
+			}
+		}
 	}
 
 	void FixedUpdate () 
@@ -71,21 +103,6 @@ public class PlayerScript : MonoBehaviour {
 		{
 			fReboundTimer = fOriginalReboundTime;						// Reset the rebound timer for the next collision with a wall
 			bRebounding = false;										// Set fRebounding to false so that position can be updated via input
-		}
-
-		// IF THE KEYPAD PLUS KEY IS PRESSED AND PLAYER'S CURRENT SIZE IS LESS THAN THE MAX SIZE THEY CAN CURRENTLY GROW
-		if( Input.GetKey( KeyCode.KeypadPlus ) && fCurrentSize < fMaxGrowSize )
-		{
-			Debug.Log ("Pressed the grow key" );
-			fCurrentSize += fGrowRate;									// Increase the current size by the grow rate
-			GrowShrinkBubble();											// Apply the change in size
-		}
-		// ELSE IF THE KEYPAD MINUS KEY IS PRESSED AND PLAYER'S CURRENT SIZE IS GREATER THAN THE MIN SIZE THEY CAN SHRINK TO
-		else if( Input.GetKey( KeyCode.KeypadMinus ) && fCurrentSize > fMinSize )
-		{
-			Debug.Log( "Pressed the shrink key" );
-			fCurrentSize -= fGrowRate;									// Decrease the current size by the grow rate
-			GrowShrinkBubble();											// Apply the change in size
 		}
 	}
 
