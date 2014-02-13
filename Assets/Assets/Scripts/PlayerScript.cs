@@ -31,8 +31,7 @@ public class PlayerScript : MonoBehaviour {
 	private Vector3 v3Tilt;												// Vector to hold tilt values
 	private bool bRebounding;											// Did the player recently collide with rocks?
 	private Vector3 v3ReboundVec;										// Rebounding velocity
-	private RaycastHit hit						= new RaycastHit();		// Raycast object
-	private Ray ray								= new Ray();			// Ray object
+
 	
 	void Start () 
 	{
@@ -42,36 +41,6 @@ public class PlayerScript : MonoBehaviour {
 		fReboundTimer	= fOriginalReboundTime;							// Set the rebound timer
 		bRebounding 	= false;										// Did the player recently collide with rocks?
 		fSpeed			= 100.0f;										// Set the speed of the player bubble
-	}
-
-	void Update()
-	{
-		// IF PLAYER HAS TOUCHED THE SCREEN
-		if( Input.touchCount > 0 )
-		{
-			Debug.Log( "Screen was touched" );
-			ray = Camera.main.ScreenPointToRay( 						// Set ray position
-			      Input.GetTouch( 0 ).position );
-
-			// WE HIT SOMETHING -- LETS SEE WHAT IT WAS
-			if( Physics.Raycast( ray, out hit, 15.0f ) )
-			{
-				// IF PLAYER PRESSED THE GROW BUTTON
-				if( hit.transform.tag == "GrowButton" && fCurrentSize < fMaxGrowSize )
-				{
-					Debug.Log( "Pressed the grow key" );
-					fCurrentSize += fGrowRate;							// Increase the current size by the grow rate
-					GrowShrinkBubble();									// Apply the change in size
-				}
-				// ELSE IF THE PLAYER PRESSED THE SHRINK BUTTON
-				if( hit.transform.tag == "ShrinkButton" && fCurrentSize > fMinSize )
-				{
-					Debug.Log( "Pressed the shrink button" ); 
-					fCurrentSize -= fGrowRate;							// Decrease the current size by the grow rate
-					GrowShrinkBubble();									// Apply the change in size
-				}
-			}
-		}
 	}
 
 	void FixedUpdate () 
@@ -179,17 +148,50 @@ public class PlayerScript : MonoBehaviour {
 
 	public float ClipTilt( float fTiltVal )
 	{
+		// IF TILT VALUE IS LESS THAN MINIMUM TILT
 		if( fTiltVal < fMinTilt )
 		{
-			return fMinTilt;
+			return fMinTilt;											// Return mininum tilt
 		}
+		// ELSE IF TILT VALUE IS GREATER THAN MAXIMUM TILT
 		else if ( fTiltVal > fMaxTilt )
 		{
-			return fMaxTilt;
+			return fMaxTilt;											// Return maximum tilt
 		}
+		// ELSE TILT IS OK
 		else
 		{
-			return fTiltVal;
+			return fTiltVal;											// Return current tilt
 		}
+	}
+
+	public void IncreaseCurrentSize( float increase )
+	{
+		fCurrentSize += increase;
+	}
+
+	public void DecreaseCurrentSize( float decrease )
+	{
+		fCurrentSize -= decrease;
+	}
+
+	public float GetGrowRate()
+	{
+		return fGrowRate;
+	}
+
+	public float GetCurrentSize()
+	{
+		return fCurrentSize;
+	}
+
+	public float GetMaxGrowSize()
+	{
+		return fMaxGrowSize;
+	}
+
+	public float GetMinSize()
+	{
+		return fMinSize;
 	}
 }

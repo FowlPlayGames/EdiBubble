@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: f264ea6c85a749e40a590574b8500588
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - mainTex: {fileID: 2800000, guid: 14403ac4cac19f44cb818ccc3fea7f9c, type: 3}
+  - glowTex: {fileID: 2800000, guid: 7695821c5e3e5cc488ae62ed8b734df8, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
