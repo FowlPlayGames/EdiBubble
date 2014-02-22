@@ -77,8 +77,6 @@ public class PlayerScript : MonoBehaviour {
 
 	void OnCollisionEnter2D( Collision2D other )
 	{
-		// TODO -- NEED TO WRITE THIS SHIT
-
 		// IF YOU ATE A SMALLER BUBBLE
 		if( other.gameObject.tag == "TestCube" )
 		{
