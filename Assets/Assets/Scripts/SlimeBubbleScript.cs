@@ -9,10 +9,11 @@ public class SlimeBubbleScript : EnemyScript {
 	// CONSTANT VARIABLES
 	float fAmplitudeRate 			= 5.0f;									// How fast do we cycle through 0 to 360 degrees?
 
-
 	// Use this for initialization
 	void Awake()
-	{}
+	{
+		bIsAlive = true;													// Set the enemy to be alive
+	}
 
 	void Start () 
 	{
