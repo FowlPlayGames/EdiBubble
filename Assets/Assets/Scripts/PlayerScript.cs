@@ -9,7 +9,7 @@ using UnityEngine;
 using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
-
+	public static PlayerScript playerScript;							// Creates an instance of the script.
 	// CONSTANT VARS
 	private const float fYTiltCalibration 		= 0.3f;					// Calibration -- Might want to use first so many frames to capture this per user
 	private const float fMinSize 				= 1.0f;					// Minimum size player bubble can be
@@ -32,7 +32,6 @@ public class PlayerScript : MonoBehaviour {
 	private bool bRebounding;											// Did the player recently collide with rocks?
 	private Vector3 v3ReboundVec;										// Rebounding velocity
 
-	
 	void Start () 
 	{
 		v3Tilt 			= Vector3.zero;									// Zero out v3Tilt vector
