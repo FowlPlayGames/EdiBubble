@@ -33,7 +33,7 @@ public class LevelGenerator : MonoBehaviour
 		Random.seed = System.DateTime.Now.Millisecond;															
 		straightCount = Random.Range(2,7);														
 		newPosition =  new Vector2(0,0);															
-		size =100;
+		size =500;
 		piecesPlaced = new GameObject[size];
 		temp = 0;
 	}
