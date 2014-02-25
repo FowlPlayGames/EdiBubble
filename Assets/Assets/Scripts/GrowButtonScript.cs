@@ -1,8 +1,6 @@
 ﻿/*************************************************
 PlayerScript - Jill Gray (Feb. 13, 2014)
-	- Controls player movement
-	- Controls player growth both up and down
-	- Modifies player data members on collision
+	- Controls player growing
 *************************************************/
 
 using UnityEngine;
