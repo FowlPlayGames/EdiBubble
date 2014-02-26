@@ -12,11 +12,8 @@ public class LevelGenerator : MonoBehaviour
 	public GameObject 	[]	piecesPlaced;		
 	private GameObject  	tempPiecePlaced;
 	//private variables
-	private PlayerScript player;			
-	private Vector2 playerPosition; 
 	private Vector2 furthestPosition;
 	private Vector2 capPosition;
-	private Vector2 currentPosition; 
 	private Vector2 newPosition;      
 	private bool  	goingVertical; 	 
 	private int  	straightCount;	
@@ -25,11 +22,7 @@ public class LevelGenerator : MonoBehaviour
 	// This is call first
 	void Awake()
 	{
-		player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerScript>(); 		
-		currentPosition = player.transform.position;											
-																								
 		goingVertical  = true;
-
 		Random.seed = System.DateTime.Now.Millisecond;															
 		straightCount = Random.Range(2,7);														
 		newPosition =  new Vector2(0,0);															
