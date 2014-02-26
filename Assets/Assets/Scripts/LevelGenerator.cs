@@ -33,17 +33,11 @@ public class LevelGenerator : MonoBehaviour
 		Random.seed = System.DateTime.Now.Millisecond;															
 		straightCount = Random.Range(2,7);														
 		newPosition =  new Vector2(0,0);															
-		size =500;
+		size = 20;
 		piecesPlaced = new GameObject[size];
 		temp = 0;
 	}
-	/*
-	 * if vertical right  horizontal + 8 and gets horizontal left.
-	 * if vertical left   horizontal - 8 and gets horizontal right.
-	 * if horizontal left 
-	 * 
-	 * .
-	 */
+
 	// Use this for initialization
 	void Start () 
 	{
