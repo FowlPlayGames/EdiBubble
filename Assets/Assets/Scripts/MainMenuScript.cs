@@ -25,7 +25,7 @@ public class MainMenuScript : MonoBehaviour {
 
 		//initial button location
 		int left = (Screen.width/2) - (buttonWidth/2); //center of button should be at center of screen
-		int top = Screen.height/2 - (int)(buttonHeight*1.5f) - buttonGapHeight; //top of first button should be 1.5 buttons, plus the botton gap, above the center of the screen
+		int top = Screen.height/2 - buttonHeight*2 - (int)(buttonGapHeight*1.5f); //top of first button should be 1.5 buttons, plus the botton gap, above the center of the screen
 
 		if (GUI.Button (new Rect (left, top, buttonWidth, buttonHeight), "Start Game")) 
 		{
@@ -42,6 +42,13 @@ public class MainMenuScript : MonoBehaviour {
 		top += buttonHeight + buttonGapHeight; //but next button below the last one
 
 		if (GUI.Button ( new Rect (left, top, buttonWidth, buttonHeight), "Quit Game"))
+		{
+			//TODO: quit the game here
+		}
+
+		top += buttonHeight + buttonGapHeight; //but next button below the last one
+
+		if (GUI.Button ( new Rect (left, top, buttonWidth, buttonHeight), "Credits"))
 		{
 			//TODO: quit the game here
 		}
