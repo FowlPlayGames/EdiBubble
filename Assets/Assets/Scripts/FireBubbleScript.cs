@@ -4,8 +4,9 @@ using System.Collections;
 public class FireBubbleScript : EnemyScript {
 
 	//constant
-	float TERRITORY_RADIUS = 5.0f;	//how far away from the initial spawn the bubble will chase the player
-	float CHASE_DISTANCE   = 500.0f;  //how far away from the bubble itself the player has to be before it will give chase
+	float TERRITORY_RADIUS = 5.0f;	  //how far away from the initial spawn the bubble will chase the player
+	float RETURN_SPEED	   = 1.0f;    //how quickly the bubble returns to its start point
+	float CHASE_SPEED	   = 2.0f;    //how quickly the bubble chases the player
 
 	//private
 	Vector3 initialPosition;	//location the enemy spawned at
@@ -25,22 +26,21 @@ public class FireBubbleScript : EnemyScript {
 		if (player == null)
 			return;
 
-		//if player is in territory
-		if ((initialPosition - player.transform.position).magnitude < TERRITORY_RADIUS) 
+		//update position
+		transform.position += ( v3Velocity * Time.deltaTime );
+
+		//update velocity
+		if ( (player.transform.position - initialPosition).magnitude < TERRITORY_RADIUS)
 		{
-			//and this bubble can see the player
-			RaycastHit hit;
+			//chase player
 			Vector3 vToPlayer = player.transform.position - this.transform.position;
-			if ( Physics.Raycast( this.transform.position,								//from the bubble's position
-			                      vToPlayer.normalized,									//towards the player
-			                      out hit,												//store result in hit
-			                      CHASE_DISTANCE))										//don't chase if they are too far away
-			{
-				if (hit.collider.tag == "Player")
-				{
-					print ("I see you!"); // test
-				}
-			}
+			v3Velocity = vToPlayer.normalized * CHASE_SPEED;
+		}
+		else
+		{
+			//return to initial position
+			Vector3 vToInitialPosition = initialPosition - this.transform.position;
+			v3Velocity = vToInitialPosition.normalized * RETURN_SPEED;
 		}
 
 	}
